@@ -346,7 +346,7 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <div class="finish-card" id="fc-better" onclick="selectFinish('better')">
       <div class="fc-header">
         <div class="fc-dot" id="dot-better"></div>
-        <div><div class="fc-name" id="fcn-better">Better — QuartzScapes Super Blue</div><div class="fc-desc">Quartz aggregate · $15/sq ft</div></div>
+        <div><div class="fc-name" id="fcn-better">Better — QuartzScapes Super Blue</div><div class="fc-desc">Quartz aggregate · $16/sq ft</div></div>
         <div class="fc-price" id="fcp-better">—</div>
       </div>
       <div class="fc-warranty" id="fcw-better">✓ 5-Year Installation Warranty &nbsp; ✓ 10-Year Manufacturer Warranty</div>
@@ -369,8 +369,8 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
       <div class="fc-sub" id="fc-best-sub">
         <div class="fc-sub-title">Select Pebble Style</div>
         <div class="sub-pills">
-          <div class="sub-pill on" id="sp-aquacool" onclick="event.stopPropagation();selectPebble('aquacool')">Aquacool Mini Pebble</div>
-          <div class="sub-pill" id="sp-aquablue" onclick="event.stopPropagation();selectPebble('aquablue')">Aquablue Mini Pebble</div>
+          <div class="sub-pill on" id="sp-whitepebble" onclick="event.stopPropagation();selectPebble('whitepebble')">White Base Pebble</div>
+          <div class="sub-pill" id="sp-bluepebble" onclick="event.stopPropagation();selectPebble('bluepebble')">Blue Base Pebble</div>
         </div>
       </div>
     </div>
@@ -396,21 +396,18 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 
     <div class="field"><label>Full Chip?</label><div class="pills"><div class="pill" id="chip-yes" onclick="setChip('Yes')">Yes</div><div class="pill" id="chip-no" onclick="setChip('No')">No</div></div></div>
 
-    <div class="row2" style="margin-top:10px">
-      <div class="field"><label>Jets (qty) — $30 ea</label><input id="jet-qty" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
-      <div class="field"><label>$ / Jet</label><input id="jet-price" type="number" inputmode="decimal" placeholder="30" oninput="calc()"></div>
+    <div class="field"><label>Trim Tile (LF) — $6/ft</label>
+      <input id="trim" type="number" inputmode="decimal" placeholder="0" oninput="calc()" style="width:100%;padding:11px 13px;border:1.5px solid #d1d5db;border-radius:8px;outline:none;font-size:15px;font-family:inherit">
     </div>
-    <div class="measure-calc" id="jet-calc"></div>
-
-    <div class="row2">
-      <div class="field"><label>Drain Covers (qty) — $25 ea</label><input id="drain-qty" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
-      <div class="field"><label>$ / Cover</label><input id="drain-price" type="number" inputmode="decimal" placeholder="25" oninput="calc()"></div>
-    </div>
-    <div class="measure-calc" id="drain-calc"></div>
-
-    <div class="row2">
-      <div class="field"><label>Trim Tile (LF) — $6/ft</label><input id="trim" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
-      <div></div>
+    <div style="display:flex;gap:16px;margin-bottom:8px">
+      <div class="chk-row" style="margin-bottom:0" onclick="setTrimLines(1)">
+        <div class="chk-box on" id="chk-trim-1">✓</div>
+        <span class="chk-label">1 Line</span>
+      </div>
+      <div class="chk-row" style="margin-bottom:0" onclick="setTrimLines(2)">
+        <div class="chk-box" id="chk-trim-2"></div>
+        <span class="chk-label">2 Lines <span class="chk-highlight">(doubles LF)</span></span>
+      </div>
     </div>
     <div class="measure-calc" id="trim-calc"></div>
 
@@ -435,27 +432,41 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <div class="section-body" id="sb-tile-sec">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:8px">Waterline Tile — $25/LF</div>
     <div class="measure-row">
-      <div class="field" style="margin-bottom:0"><label>Linear Feet</label><input id="tile-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
+      <div class="field" style="margin-bottom:0"><label>Pool Tile (LF)</label><input id="tile-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
       <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="tile-rate" type="number" value="25" oninput="calc()"></div>
     </div>
     <div class="measure-calc" id="tile-calc"></div>
+    <div class="measure-row">
+      <div class="field" style="margin-bottom:0"><label>Spa Tile (LF)</label><input id="spa-tile-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
+      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="spa-tile-rate" type="number" value="25" oninput="calc()"></div>
+    </div>
+    <div class="measure-calc" id="spa-tile-calc"></div>
     <div class="chk-row" onclick="toggleTileClean()">
       <div class="chk-box" id="chk-tile-clean"></div>
       <span class="chk-label">Clean only <span class="chk-highlight">($12/LF)</span></span>
     </div>
 
     <hr class="div">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:8px">Raised Surfaces — $28/LF</div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:8px">Raised Surfaces — $31/LF</div>
     <div class="measure-row">
       <div class="field" style="margin-bottom:0"><label>Spa Surround (LF)</label><input id="raised-spa-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
-      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="raised-spa-rate" type="number" value="28" oninput="calc()"></div>
+      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="raised-spa-rate" type="number" value="31" oninput="calc()"></div>
     </div>
     <div class="measure-calc" id="raised-spa-calc"></div>
     <div class="measure-row">
       <div class="field" style="margin-bottom:0"><label>Raised Wall (LF)</label><input id="raised-wall-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
-      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="raised-wall-rate" type="number" value="28" oninput="calc()"></div>
+      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="raised-wall-rate" type="number" value="31" oninput="calc()"></div>
     </div>
     <div class="measure-calc" id="raised-wall-calc"></div>
+    <div class="measure-row">
+      <div class="field" style="margin-bottom:0"><label>Other (describe)</label><input id="raised-other-label" type="text" placeholder="e.g. Beam, Step..." oninput="calc()" style="padding:11px 13px;border:1.5px solid #d1d5db;border-radius:8px;outline:none;font-size:15px;font-family:inherit;width:100%"></div>
+      <div class="field" style="margin-bottom:0"><label>$/LF</label><input id="raised-other-rate" type="number" value="31" oninput="calc()"></div>
+    </div>
+    <div class="measure-row" style="margin-top:-6px">
+      <div class="field" style="margin-bottom:0"><label>Other (LF)</label><input id="raised-other-lf" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
+      <div></div>
+    </div>
+    <div class="measure-calc" id="raised-other-calc"></div>
 
     <div class="subtotal"><span class="lbl">Tile & Surfaces Subtotal</span><span class="val" id="st-tile">$0</span></div>
     </div>
@@ -901,7 +912,7 @@ const PT={88:450,90:460,91:470,92:480,94:490,95:500,96:510,97:520,98:530,99:540,
 const SP=Object.keys(PT).map(Number).sort((a,b)=>a-b);
 function interpArea(p){if(PT[p]!==undefined)return PT[p];const lo=SP.filter(x=>x<=p).at(-1),hi=SP.find(x=>x>=p);if(lo===undefined||hi===undefined)return null;return Math.round(PT[lo]+(p-lo)/(hi-lo)*(PT[hi]-PT[lo]));}
 
-const RATES={good:13,better:15,best:17};
+const RATES={good:13,better:16,best:17};
 const COLORS={good:'#2563eb',better:'#7c3aed',best:'#b45309'};
 const BGS={good:'#eff6ff',better:'#f5f3ff',best:'#fffbeb'};
 const PRODUCTS={good:'White Plaster',better:'QuartzScapes Super Blue',best:'Stonescapes Pebble'};
@@ -913,7 +924,7 @@ const v=id=>document.getElementById(id);
 const num=id=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
 
 // ── STATE ──
-let tier=null, pebble='aquacool', spa='', tileClean=false, copingProf='';
+let tier=null, pebble='whitepebble', spa='', tileClean=false, copingProf='';
 let sprayRows=[{w:'',l:''},{w:'',l:''},{w:'',l:''},{w:'',l:''}];
 let proposals=[];
 let currentSnap=null;
@@ -966,16 +977,16 @@ function selectFinish(t){
 
 function selectPebble(p){
   pebble=p;
-  v('sp-aquacool').className='sub-pill'+(p==='aquacool'?' on':'');
-  v('sp-aquablue').className='sub-pill'+(p==='aquablue'?' on':'');
+  v('sp-whitepebble').className='sub-pill'+(p==='whitepebble'?' on':'');
+  v('sp-bluepebble').className='sub-pill'+(p==='bluepebble'?' on':'');
   // Update name
-  const name=p==='aquablue'?'Stonescapes Aquablue Mini Pebble':'Stonescapes Aquacool Mini Pebble';
+  const name=p==='bluepebble'?'Stonescapes Blue Base Pebble':'Stonescapes White Base Pebble';
   const _fb=v('fcn-best');if(_fb)_fb.textContent='Best — '+name;
   calc();
 }
 
 function getPebbleName(t,pb){
-  if(t==='best')return pb==='aquablue'?'Stonescapes Aquablue Mini Pebble':'Stonescapes Aquacool Mini Pebble';
+  if(t==='best')return pb==='bluepebble'?'Stonescapes Blue Base Pebble':'Stonescapes White Base Pebble';
   return PRODUCTS[t]||'—';
 }
 
@@ -1047,10 +1058,10 @@ function calc(){
 
   const plasterAmt=tier&&area>0?area*RATES[tier]:0;
   const spaAmt=spa==='Yes'?((parseFloat((document.getElementById('spa-qty')?.value)||1)||1)*(parseFloat((document.getElementById('spa-price')?.value)||500)||500)):0;
-  const trimLF=num('trim'), trimAmt=trimLF*6;
+  const trimLF=num('trim')*(trimLines||1), trimAmt=trimLF*6;
   if(v('trim-calc'))v('trim-calc').textContent=trimLF>0?trimLF+' LF × $6.00 = '+fmt(trimAmt):'';
-  const jetQtyS=num('jet-qty'), jetPriceS=parseFloat((v('jet-price')&&(document.getElementById('jet-price')?.value||''))||0)||30, jetAmtS=jetQtyS*jetPriceS;
-  const drainQtyS=num('drain-qty'), drainPriceS=parseFloat((v('drain-price')&&(document.getElementById('drain-price')?.value||''))||0)||25, drainAmtS=drainQtyS*drainPriceS;
+  const jetQtyS=0, jetPriceS=0, jetAmtS=0;
+  const drainQtyS=0, drainPriceS=0, drainAmtS=0;
   if(v('jet-calc'))v('jet-calc').textContent=jetQtyS>0?jetQtyS+' × $'+jetPriceS+' = '+fmt(jetAmtS):'';
   if(v('drain-calc'))v('drain-calc').textContent=drainQtyS>0?drainQtyS+' × $'+drainPriceS+' = '+fmt(drainAmtS):'';
   const startupAmt = startupVal==='Yes' ? 900 : 0;
@@ -1063,11 +1074,16 @@ function calc(){
   const tileLF=num('tile-lf'), tileRate=num('tile-rate');
   const tileAmt=tileLF*tileRate;
   const _tc=v('tile-calc');if(_tc)_tc.textContent=tileLF>0?fmt(tileAmt):'';
+  const spaTileLF=num('spa-tile-lf'), spaTileRate=num('spa-tile-rate');
+  const spaTileAmt=spaTileLF*spaTileRate;
+  const _stc=v('spa-tile-calc');if(_stc)_stc.textContent=spaTileLF>0?fmt(spaTileAmt):'';
   const raisedSpaAmt=num('raised-spa-lf')*num('raised-spa-rate');
   const raisedWallAmt=num('raised-wall-lf')*num('raised-wall-rate');
+  const raisedOtherAmt=num('raised-other-lf')*num('raised-other-rate');
   if(v('raised-spa-calc'))v('raised-spa-calc').textContent=num('raised-spa-lf')>0?num('raised-spa-lf')+' LF × $'+num('raised-spa-rate')+' = '+fmt(raisedSpaAmt):'';
   if(v('raised-wall-calc'))v('raised-wall-calc').textContent=num('raised-wall-lf')>0?num('raised-wall-lf')+' LF × $'+num('raised-wall-rate')+' = '+fmt(raisedWallAmt):'';
-  const tileSectionTotal=tileAmt+raisedSpaAmt+raisedWallAmt;
+  if(v('raised-other-calc'))v('raised-other-calc').textContent=num('raised-other-lf')>0?num('raised-other-lf')+' LF × $'+num('raised-other-rate')+' = '+fmt(raisedOtherAmt):'';
+  const tileSectionTotal=tileAmt+spaTileAmt+raisedSpaAmt+raisedWallAmt+raisedOtherAmt;
   const _stile=v('st-tile');if(_stile)_stile.textContent=fmt(tileSectionTotal);
 
   const cpAmt=(num('cp-lf'))*(num('cp-rate'));
@@ -1162,9 +1178,9 @@ function calc(){
 function getSnap(){
   const perim=parseFloat((document.getElementById('perimeter')?.value||''))||0;
   const area=shapeType==='geometric'?geoRows.reduce((s,r)=>s+(parseFloat(r.l)||0)*(parseFloat(r.w)||0),0):(perim>0?interpArea(perim)||0:0);
-  const trimLF=num('trim'), trimAmt=trimLF*6;
-  const jetQtyS=num('jet-qty'), jetPriceS=parseFloat((v('jet-price')&&(document.getElementById('jet-price')?.value||''))||0)||30, jetAmtS=jetQtyS*jetPriceS;
-  const drainQtyS=num('drain-qty'), drainPriceS=parseFloat((v('drain-price')&&(document.getElementById('drain-price')?.value||''))||0)||25, drainAmtS=drainQtyS*drainPriceS;
+  const trimLF=num('trim')*(trimLines||1), trimAmt=trimLF*6;
+  const jetQtyS=0, jetPriceS=0, jetAmtS=0;
+  const drainQtyS=0, drainPriceS=0, drainAmtS=0;
   const spaAmt=spa==='Yes'?(parseFloat((document.getElementById('spa-price')?.value||''))||0):0;
   const plasterAmt=tier&&area>0?area*RATES[tier]:0;
   const tileLF=num('tile-lf'),tileRate=num('tile-rate'),tileAmt=tileLF*tileRate;
@@ -1199,6 +1215,8 @@ function getSnap(){
     drainQty:drainQtyS,drainPrice:drainPriceS,drainAmt:drainAmtS,
     tileLF,tileRate,tileClean,tileAmt,tileNotes:(document.getElementById('tile-notes')?.value||''),
     raisedSpaLF:num('raised-spa-lf'),raisedSpaRate:num('raised-spa-rate'),raisedSpaAmt,
+    raisedWallLF:num('raised-wall-lf'),raisedWallRate:num('raised-wall-rate'),raisedWallAmt,
+    raisedOtherLF:num('raised-other-lf'),raisedOtherRate:num('raised-other-rate'),raisedOtherLabel:(document.getElementById('raised-other-label')?.value||''),raisedOtherAmt,
     raisedWallLF:num('raised-wall-lf'),raisedWallRate:num('raised-wall-rate'),raisedWallAmt,
     tileSectionTotal,
     copingProf,cpLF:num('cp-lf'),cpRate:num('cp-rate'),csLF:num('cs-lf'),csRate:num('cs-rate'),coLF:num('co-lf'),coRate:num('co-rate'),copingTotal,
@@ -1321,7 +1339,7 @@ function gbbToggleRow(key){
   });
   // Recalc totals
   let newShared=0;
-  const RATES={good:13,better:15,best:17};
+  const RATES={good:13,better:16,best:17};
   window._gbbSections&&window._gbbSections.forEach(s=>{
     s.rows.forEach(r=>{
       const k=s.title+'|'+r.label;
@@ -1329,7 +1347,7 @@ function gbbToggleRow(key){
     });
   });
   ['good','better','best'].forEach(t=>{
-      const RATES={good:13,better:15,best:17};
+      const RATES={good:13,better:16,best:17};
     const plaster=(snap.area||0)*RATES[t];
     const total=plaster+newShared;
     const fmtTotal='$'+Math.round(total).toLocaleString('en-US');
@@ -1349,10 +1367,10 @@ function renderGBB(snap){
   if(gbbAddr)gbbAddr.textContent=snap.clientAddress||'';
 
   const fmt=n=>'$'+Math.round(n).toLocaleString('en-US');
-  const RATES={good:13,better:15,best:17};
+  const RATES={good:13,better:16,best:17};
   const COLORS_GBB={good:'#2563eb',better:'#7c3aed',best:'#b45309'};
   const BGS_GBB={good:'#eff6ff',better:'#f5f3ff',best:'#fffbeb'};
-  const PRODUCTS_GBB={good:'White Plaster',better:'QuartzScapes Super Blue',best:snap.pebble==='aquablue'?'Stonescapes Aquablue Mini Pebble':'Stonescapes Aquacool Mini Pebble'};
+  const PRODUCTS_GBB={good:'White Plaster',better:'QuartzScapes Super Blue',best:snap.pebble==='bluepebble'?'Stonescapes Blue Base Pebble':'Stonescapes White Base Pebble'};
   const WARR_GBB={good:'2-Year Install Warranty',better:'5-Year Install · 10-Year Mfg',best:'7-Year Install · 10-Year Mfg'};
 
   // Build shared line items (same for all tiers)
@@ -1369,9 +1387,11 @@ function renderGBB(snap){
     {label:'New Plaster Startup',val:snap.startupVal==='Yes'?900:0},
   ]);
   sec('Tile & Surfaces',[
-    {label:'Waterline Tile ('+snap.tileLF+' LF)',val:snap.tileAmt||0},
+    {label:'Pool Tile ('+snap.tileLF+' LF)',val:snap.tileAmt||0},
+    {label:'Spa Tile ('+(snap.spaTileLF||0)+' LF)',val:snap.spaTileAmt||0},
     {label:'Spa Surround ('+snap.raisedSpaLF+' LF)',val:snap.raisedSpaAmt||0},
     {label:'Raised Wall ('+snap.raisedWallLF+' LF)',val:snap.raisedWallAmt||0},
+    {label:(snap.raisedOtherLabel||'Other Raised')+' ('+snap.raisedOtherLF+' LF)',val:snap.raisedOtherAmt||0},
   ]);
   sec('Coping',[
     {label:'Pool Coping ('+snap.cpLF+' LF)',val:(snap.cpLF||0)*(snap.cpRate||32)},
@@ -1456,7 +1476,7 @@ function downloadGBBPDF(){
   const name=(snap.clientName||'Estimate').replace(/[^a-zA-Z0-9 ]/g,'');
 
   const fmtP=n=>'$'+Math.round(n).toLocaleString('en-US');
-  const RATES={good:13,better:15,best:17};
+  const RATES={good:13,better:16,best:17};
   const COLORS={good:'#2563eb',better:'#7c3aed',best:'#b45309'};
   const BGS={good:'#eff6ff',better:'#f5f3ff',best:'#fffbeb'};
   const PRODUCTS={good:'White Plaster',better:'QuartzScapes Super Blue',best:getPebbleName('best',snap.pebble)};
@@ -1743,7 +1763,7 @@ async function autoNotify(sigName){
       client_address:snap.clientAddress||'',
       client_phone:snap.clientPhone||'',
       client_email:snap.clientEmail||'',
-      finish:getPebbleName(propTier,snap.pebble||'aquacool'),
+      finish:getPebbleName(propTier,snap.pebble||'whitepebble'),
       total:total,
       signed_by:sigName,
       date:date,
@@ -1862,14 +1882,14 @@ function resendEmail(id){
 
 // ── CLEAR FORM ──
 function clearForm(){
-  tier=null;pebble='aquacool';spa='';tileClean=false;copingProf='';chipVal='';
+  tier=null;pebble='whitepebble';spa='';tileClean=false;copingProf='';chipVal='';
   document.querySelectorAll('.pill').forEach(el=>el.classList.remove('on'));
   document.querySelectorAll('.finish-card').forEach(el=>{el.style.borderColor='#e5e7eb';el.style.background='#fff';});
   document.querySelectorAll('.fc-dot').forEach(el=>el.style.background='#d1d5db');
   document.querySelectorAll('.fc-name').forEach(el=>el.style.color='#374151');
   document.querySelectorAll('.fc-price').forEach(el=>el.style.color='#9ca3af');
   v('fc-best-sub').style.display='none';
-  v('sp-aquacool').className='sub-pill on';v('sp-aquablue').className='sub-pill';
+  v('sp-whitepebble').className='sub-pill on';v('sp-bluepebble').className='sub-pill';
   const _fb2=v('fcn-best');if(_fb2)_fb2.textContent='Best — Stonescapes Pebble';
   v('spa-price-row').style.display='none';setVal('spa-price','500');
   v('chk-tile-clean').className='chk-box';
@@ -2073,7 +2093,7 @@ function makeProposalLink(snap){
 
 // ── PROPOSAL STANDALONE (embedded) ──
 
-const _PS_RATES={good:13,better:15,best:17};
+const _PS_RATES={good:13,better:16,best:17};
 const _PS_COLORS={good:'#2563eb',better:'#7c3aed',best:'#b45309'};
 const _PS_BGS={good:'#eff6ff',better:'#f5f3ff',best:'#fffbeb'};
 const _PS_WARR={good:{i:'2-Year Installation Warranty',m:null},better:{i:'5-Year Installation Warranty',m:'10-Year Manufacturer Warranty'},best:{i:'7-Year Installation Warranty',m:'10-Year Manufacturer Warranty'}};
@@ -2082,7 +2102,7 @@ const _PS_v=id=>document.getElementById(id);
 
 
 function getPebbleName(t,pb){
-  if(t==='best')return pb==='aquablue'?'Stonescapes Aquablue Mini Pebble':'Stonescapes Aquacool Mini Pebble';
+  if(t==='best')return pb==='bluepebble'?'Stonescapes Blue Base Pebble':'Stonescapes White Base Pebble';
   return {good:'White Plaster',better:'QuartzScapes Super Blue',best:'Stonescapes Pebble'}[t]||'—';
 }
 
@@ -2215,7 +2235,7 @@ async function autoNotify(sigName){
       client_address:_ps_snap.clientAddress||'',
       client_phone:_ps_snap.clientPhone||'',
       client_email:_ps_snap.clientEmail||'',
-      finish:getPebbleName(propTier,_ps_snap.pebble||'aquacool'),
+      finish:getPebbleName(propTier,_ps_snap.pebble||'whitepebble'),
       total,
       signed_by:sigName,
       date,
@@ -2529,6 +2549,17 @@ function toggleSection(id){
   toggle.classList.toggle('on', !isOn);
 }
 
+// ── TRIM LINES ──
+let trimLines = 1;
+function setTrimLines(n){
+  trimLines = n;
+  const c1=document.getElementById('chk-trim-1');
+  const c2=document.getElementById('chk-trim-2');
+  if(c1){c1.className='chk-box'+(n===1?' on':'');c1.textContent=n===1?'✓':'';}
+  if(c2){c2.className='chk-box'+(n===2?' on':'');c2.textContent=n===2?'✓':'';}
+  calc();
+}
+
 // ── STARTUP ──
 let startupVal = '';
 function setStartup(s){
@@ -2616,7 +2647,7 @@ function loadTestData(){
   setVal('perimeter','110');
   onPerimeter();
   selectFinish('best');
-  selectPebble('aquacool');
+  selectPebble('whitepebble');
   setSpa('Yes');
   setVal('spa-price','500');
   setVal('spa-qty','1');
