@@ -2642,6 +2642,13 @@ function renderCustomItems(){
 checkHashForProposal();
 renderCustomItems();
 
+// ── PREFILL CLIENT INFO FROM LINK (e.g. from GHL: ?name=..&address=..&phone=..&email=..) ──
+(function prefillFromUrl(){
+  const q=new URLSearchParams(location.search);
+  const map={name:'client-name',address:'client-addr',phone:'client-phone',email:'client-email'};
+  Object.keys(map).forEach(k=>{const val=(q.get(k)||'').trim();if(val&&!/^\{\{.*\}\}$/.test(val))setVal(map[k],val);});
+})();
+
 calc();
 </script>
 </body>
