@@ -2459,10 +2459,14 @@ function setShapeType(type){
     ff.style.background='#0284c7';ff.style.borderColor='#0284c7';ff.style.color='#fff';ff.style.fontWeight='700';
     geo.style.background='#f9fafb';geo.style.borderColor='#d1d5db';geo.style.color='#374151';geo.style.fontWeight='500';
     ffDiv.style.display='block';geoDiv.style.display='none';
+    // Hide geo total, show freeform area if perimeter is set
+    const geoRes=document.getElementById('geo-result');if(geoRes)geoRes.style.display='none';
   } else {
     geo.style.background='#0284c7';geo.style.borderColor='#0284c7';geo.style.color='#fff';geo.style.fontWeight='700';
     ff.style.background='#f9fafb';ff.style.borderColor='#d1d5db';ff.style.color='#374151';ff.style.fontWeight='500';
     ffDiv.style.display='none';geoDiv.style.display='block';
+    // Hide freeform area result
+    const ar=document.getElementById('area-result');if(ar)ar.style.display='none';
     renderGeoRows();
   }
   calc();
