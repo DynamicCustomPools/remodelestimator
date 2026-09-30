@@ -594,6 +594,13 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
       <div class="pill" id="ls-repair" onclick="setPill('ls','repair')">Repair</div>
       <div class="pill" id="ls-none" onclick="setPill('ls','none')">None</div>
     </div></div>
+    <div class="field"><label>LED Color</label>
+      <div class="pills">
+        <div class="pill" id="lc-white" onclick="selectLightColor('white',1536)">White — $1,536</div>
+        <div class="pill" id="lc-color" onclick="selectLightColor('color',1891)">Color — $1,891</div>
+      </div>
+    </div>
+    <div class="price-note">Selecting color updates pool & spa light price · edit anytime</div>
     <div class="row2">
       <div class="field"><label>Pool Lights (qty)</label><input id="pool-light-qty" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
       <div class="field"><label>$ / Pool Light</label><input id="pool-light-price" type="number" inputmode="decimal" placeholder="1427" oninput="calc()"></div>
@@ -619,13 +626,6 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
         <div class="pill" id="lb-other" onclick="setPill('lb','other')">Other</div>
       </div></div>
     </div>
-    <div class="field"><label>LED Color</label>
-      <div class="pills">
-        <div class="pill" id="lc-white" onclick="selectLightColor('white',1536)">White — $1,536</div>
-        <div class="pill" id="lc-color" onclick="selectLightColor('color',1891)">Color — $1,891</div>
-      </div>
-    </div>
-    <div class="price-note">Selecting color updates pool & spa light price · edit anytime</div>
     <div class="subtotal"><span class="lbl">Lights Subtotal</span><span class="val" id="st-lights">$0</span></div>
 
     <hr class="div">
@@ -687,6 +687,17 @@ hr.div{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <!-- FILTER -->
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:10px">Filter</div>
     <div class="field"><label>Action</label><div class="pills"><div class="pill" id="fa-clean" onclick="setPill('fa','clean')">Clean</div><div class="pill" id="fa-replace" onclick="setPill('fa','replace')">Replace</div><div class="pill" id="fa-repair" onclick="setPill('fa','repair')">Repair</div></div></div>
+    <div class="field"><label>Brand</label><div class="pills">
+      <div class="pill" id="fb-jandy" onclick="setPill('fb','jandy')">Jandy</div>
+      <div class="pill" id="fb-pentair" onclick="setPill('fb','pentair')">Pentair</div>
+      <div class="pill" id="fb-hayward" onclick="setPill('fb','hayward')">Hayward</div>
+    </div></div>
+    <div class="field"><label>Type</label><div class="pills">
+      <div class="pill" id="ft-cartridge" onclick="setPill('ft','cartridge')">Cartridge</div>
+      <div class="pill" id="ft-de" onclick="setPill('ft','de')">DE</div>
+      <div class="pill" id="ft-sand" onclick="setPill('ft','sand')">Sand</div>
+    </div></div>
+    <div class="field"><label>Size</label><input id="filter-size" type="text" placeholder="e.g. 420 sq ft / CV460"></div>
     <div class="row2">
       <div class="field"><label>Notes</label><input id="filter-notes" type="text" placeholder="Details"></div>
       <div class="field"><label>Price</label><input id="filter-price" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div>
@@ -1022,6 +1033,13 @@ function setCoping(p){
   calc();
 }
 
+// ── FILTER LABEL (proposal line item) ──
+function filterLabel(sn){
+  const spec=[sn.filterBrand,sn.filterType,sn.filterSize].filter(Boolean).join(' ');
+  const parts=[spec,sn.filterNotes].filter(Boolean);
+  return 'Filter'+(parts.length?' — '+parts.join(' · '):'');
+}
+
 // ── PILLS ──
 function setPill(group,val){
   document.querySelectorAll('[id^="'+group+'-"]').forEach(el=>el.classList.remove('on'));
@@ -1230,7 +1248,7 @@ function getSnap(){
     pumpAmt,pumpBrand:document.querySelector('.pill.on[id^="pb-"]')?.textContent?.split(' —')[0]||'',pumpLabor:num('pump-labor'),
     heaterAmt,heaterBrand:document.querySelector('.pill.on[id^="hb-"]')?.textContent?.split(' —')[0]||'',heaterLabor:num('heater-labor'),
     autoAmt,autoNotes:(document.getElementById('automation')?.value||''),autoBrand:document.querySelector('.pill.on[id^="ab-"]')?.textContent?.split(' —')[0]||'',autoLabor:num('automation-labor'),
-    filterAmt,filterNotes:(document.getElementById('filter-notes')?.value||''),
+    filterAmt,filterNotes:(document.getElementById('filter-notes')?.value||''),filterBrand:document.querySelector('.pill.on[id^="fb-"]')?.textContent||'',filterType:document.querySelector('.pill.on[id^="ft-"]')?.textContent||'',filterSize:(document.getElementById('filter-size')?.value||''),
     equipTotal,surfaceTotal,extras,grand,plasterAmt,
     addNotes:(document.getElementById('notes')?.value||''),
     startupVal,startupAmt:startupVal==='Yes'?900:0,
@@ -1634,7 +1652,7 @@ function renderLineItems(snap){
   if(snap.pumpAmt>0)items.push({id:'pump',label:'Pump'+(snap.pumpBrand?' — '+snap.pumpBrand:'')+(snap.pumpSize?' '+snap.pumpSize:''),val:snap.pumpAmt,locked:false});
   if(snap.heaterAmt>0)items.push({id:'heater',label:'Heater'+(snap.heaterBrand?' — '+snap.heaterBrand:''),val:snap.heaterAmt,locked:false});
   if(snap.autoAmt>0)items.push({id:'auto',label:'Automation'+(snap.autoBrand?' — '+snap.autoBrand:'')+(snap.autoNotes?' ('+snap.autoNotes+')':''),val:snap.autoAmt,locked:false});
-  if(snap.filterAmt>0)items.push({id:'filter',label:'Filter'+(snap.filterNotes?' — '+snap.filterNotes:''),val:snap.filterAmt,locked:false});
+  if(snap.filterAmt>0)items.push({id:'filter',label:filterLabel(snap),val:snap.filterAmt,locked:false});
   if(snap.startupVal==='Yes')items.push({id:'startup',label:'New Plaster Startup',val:900,locked:false});
   if(snap.customItems&&snap.customItems.length>0){
     snap.customItems.forEach((ci,i)=>{
@@ -1894,7 +1912,7 @@ function clearForm(){
   v('spa-price-row').style.display='none';setVal('spa-price','500');
   v('chk-tile-clean').className='chk-box';
   setVal('client-name','');setVal('client-addr','');setVal('client-phone','');setVal('client-email','');
-  ['jets','drains','trim','tile-lf','tile-notes','cp-lf','cs-lf','co-lf','exp-lf','notes','pump-brand','pump-size','heater','automation','filter-notes','light-qty'].forEach(id=>{if(v(id))v(id).value='';});
+  ['jets','drains','trim','tile-lf','tile-notes','cp-lf','cs-lf','co-lf','exp-lf','notes','pump-brand','pump-size','heater','automation','filter-notes','filter-size','light-qty'].forEach(id=>{if(v(id))v(id).value='';});
   setVal('tile-rate','25');setVal('cp-rate','32');setVal('cs-rate','32');setVal('co-rate','32');setVal('exp-rate','6.50');
   setVal('perimeter','');const _ar=v('area-result');if(_ar)_ar.style.display='none';
   qps.forEach(p=>v('qp-'+p)?.classList.remove('on'));
@@ -2301,7 +2319,7 @@ function renderStandaloneProposal(){
   if(_ps_snap.pumpAmt>0)addItem('pump','Pump'+(_ps_snap.pumpBrand?' — '+_ps_snap.pumpBrand:''),_ps_snap.pumpAmt);
   if(_ps_snap.heaterAmt>0)addItem('heater','Heater'+(_ps_snap.heaterBrand?' — '+_ps_snap.heaterBrand:''),_ps_snap.heaterAmt);
   if(_ps_snap.autoAmt>0)addItem('auto','Automation'+(_ps_snap.autoBrand?' — '+_ps_snap.autoBrand:''),_ps_snap.autoAmt);
-  if(_ps_snap.filterAmt>0)addItem('filter','Filter'+(_ps_snap.filterNotes?' — '+_ps_snap.filterNotes:''),_ps_snap.filterAmt);
+  if(_ps_snap.filterAmt>0)addItem('filter',filterLabel(_ps_snap),_ps_snap.filterAmt);
 
   const logoSrc = 'https://remodelestimator.scott-782.workers.dev/logo.png';
 
