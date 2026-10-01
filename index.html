@@ -1204,7 +1204,9 @@ function getSnap(){
   const tileLF=num('tile-lf'),tileRate=num('tile-rate'),tileAmt=tileLF*tileRate;
   const raisedSpaAmt=num('raised-spa-lf')*num('raised-spa-rate');
   const raisedWallAmt=num('raised-wall-lf')*num('raised-wall-rate');
-  const tileSectionTotal=tileAmt+raisedSpaAmt+raisedWallAmt;
+  const raisedOtherAmt=num('raised-other-lf')*num('raised-other-rate');
+  const spaTileLF=num('spa-tile-lf'), spaTileRate=num('spa-tile-rate'), spaTileAmt=spaTileLF*spaTileRate;
+  const tileSectionTotal=tileAmt+spaTileAmt+raisedSpaAmt+raisedWallAmt+raisedOtherAmt;
   const cpAmt=num('cp-lf')*num('cp-rate'),csAmt=num('cs-lf')*num('cs-rate'),coAmt=num('co-lf')*num('co-rate'),copingTotal=cpAmt+csAmt+coAmt;
   const _coc=v('co-calc');if(_coc)_coc.textContent=num('co-lf')>0?num('co-lf')+' LF × $'+num('co-rate')+' = '+fmt(coAmt):'';
   const expAmt=num('exp-lf')*num('exp-rate');
@@ -1232,6 +1234,7 @@ function getSnap(){
     jetQty:jetQtyS,jetPrice:jetPriceS,jetAmt:jetAmtS,
     drainQty:drainQtyS,drainPrice:drainPriceS,drainAmt:drainAmtS,
     tileLF,tileRate,tileClean,tileAmt,tileNotes:(document.getElementById('tile-notes')?.value||''),
+    spaTileLF,spaTileRate,spaTileAmt,
     raisedSpaLF:num('raised-spa-lf'),raisedSpaRate:num('raised-spa-rate'),raisedSpaAmt,
     raisedWallLF:num('raised-wall-lf'),raisedWallRate:num('raised-wall-rate'),raisedWallAmt,
     raisedOtherLF:num('raised-other-lf'),raisedOtherRate:num('raised-other-rate'),raisedOtherLabel:(document.getElementById('raised-other-label')?.value||''),raisedOtherAmt,
