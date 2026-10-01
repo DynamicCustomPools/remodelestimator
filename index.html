@@ -1265,7 +1265,7 @@ function getSnap(){
 async function sendToClientWithSnap(snap){
   const msgEl=document.getElementById('send-msg');
   if(msgEl){msgEl.textContent='Generating link...';msgEl.classList.add('show');}
-  const longLink=makeProposalLink(snap);
+  const longLink=await makeProposalLink(snap);
   const shortLink=await shortenURL(longLink);
   const to=snap.clientEmail?encodeURIComponent(snap.clientEmail):'';
   const streetOnly=(snap.clientAddress||'').split(',')[0].trim()||'your property';
@@ -1279,7 +1279,7 @@ async function textToClientWithSnap(snap){
   const phone=(snap.clientPhone||'').split('').filter(c=>c>='0'&&c<='9').join('');
   const streetOnly=(snap.clientAddress||'').split(',')[0].trim()||'your property';
   const total=snap.grand>0?(' Total: $'+Math.round(snap.grand).toLocaleString('en-US')+'.'):'.';
-  const longLink=makeProposalLink(snap);
+  const longLink=await makeProposalLink(snap);
   const shortLink=await shortenURL(longLink);
   const msgParts=['Hi '+snap.clientName+'! Scott Davis here with Dynamic Custom Pools. Here\'s your remodel estimate for '+streetOnly+total,'','Click here to view your proposal: '+shortLink,'','If you\'d like to change anything just reply and I\'ll get it updated ASAP!'];
   window.location.href='sms:'+(phone||'')+'?body='+encodeURIComponent(msgParts.join('\n'));
@@ -1296,7 +1296,7 @@ async function textToClient(){
   const msgEl=v('send-msg');
   msgEl.textContent='Generating link...';
   msgEl.classList.add('show');
-  const longLink=makeProposalLink(snap);
+  const longLink=await makeProposalLink(snap);
   const shortLink=await shortenURL(longLink);
   const msg="Hi "+snap.clientName+"! Scott Davis here with Dynamic Custom Pools. Here's your remodel estimate for "+streetOnly+total+"\n\nClick here to view your proposal: "+shortLink+"\n\nIf you'd like to change anything just reply and I'll get it updated ASAP!";
   const smsHref='sms:'+(phone?phone:'')+'?body='+encodeURIComponent(msg);
@@ -1315,7 +1315,7 @@ async function sendToClient(){
   const msgEl=v('send-msg');
   msgEl.textContent='Generating link...';
   msgEl.classList.add('show');
-  const longLink=makeProposalLink(snap);
+  const longLink=await makeProposalLink(snap);
   const shortLink=await shortenURL(longLink);
   const body=['Hi '+(snap.clientName||'')+',','','Thank you for the opportunity to provide a remodel estimate for your pool at '+streetOnly+'. If you\'d like to add or change anything, please let me know and I\'ll get it back to you ASAP.','','Click here to view your proposal: '+shortLink,'','If everything looks good, click accept and we\'ll be in touch with next steps.','','Scott Davis','Dynamic Custom Pools'].join('\n');
   window.location.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
@@ -2088,27 +2088,49 @@ function addDemoRow(){
 
 // ── URL SHORTENER ──
 async function shortenURL(longURL){
-  try{
-    const res=await fetch('https://cleanuri.com/api/v1/shorten',{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:'url='+encodeURIComponent(longURL)
-    });
-    if(res.ok){
+  for(const api of ['https://is.gd/create.php?format=json&url=','https://v.gd/create.php?format=json&url=']){
+    try{
+      const res=await fetch(api+encodeURIComponent(longURL));
       const data=await res.json();
-      if(data.result_url)return data.result_url;
-    }
-  }catch(e){}
+      if(data.shorturl)return data.shorturl;
+    }catch(e){}
+  }
   return longURL;
 }
 
 // ── PROPOSAL LINK ──
-function makeProposalLink(snap){
+// Compressed (deflate) + base64url so the link is as short as possible: #p~<data>
+function _b64urlEncode(bytes){
+  let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function _b64urlDecode(str){
+  str=str.replace(/-/g,'+').replace(/_/g,'/');
+  while(str.length%4)str+='=';
+  const bin=atob(str);const out=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);
+  return out;
+}
+async function _streamBytes(bytes,stream){
+  const w=stream.writable.getWriter();w.write(bytes);w.close();
+  return new Uint8Array(await new Response(stream.readable).arrayBuffer());
+}
+async function makeProposalLink(snap){
+  const base='https://remodelestimator.scott-782.workers.dev/';
+  const json=JSON.stringify(snap);
   try{
-    const json=JSON.stringify(snap);
-    const b64=btoa(encodeURIComponent(json));
-    return 'https://remodelestimator.scott-782.workers.dev/#proposal/'+b64;
-  }catch(e){return 'https://remodelestimator.scott-782.workers.dev';}
+    const packed=await _streamBytes(new TextEncoder().encode(json),new CompressionStream('deflate-raw'));
+    return base+'#p~'+_b64urlEncode(packed);
+  }catch(e){}
+  try{return base+'#proposal/'+btoa(encodeURIComponent(json));}catch(e){return base;}
+}
+async function decodeProposal(hash){
+  if(hash.startsWith('#p~')){
+    const bytes=await _streamBytes(_b64urlDecode(hash.slice(3)),new DecompressionStream('deflate-raw'));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  const b64=hash.replace('#proposal/','').replace('#/','').replace('#','');
+  return JSON.parse(decodeURIComponent(atob(b64)));
 }
 
 
@@ -2462,21 +2484,21 @@ function checkHashForProposal(){
     }catch(e){}
   }
   const hash=window.location.hash;
-  if(hash.startsWith('#proposal/')||hash.startsWith('#ey')||hash.startsWith('#/ey')){
+  if(hash.startsWith('#p~')||hash.startsWith('#proposal/')||hash.startsWith('#ey')||hash.startsWith('#/ey')){
     // Hide estimator UI, show proposal
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById('page-proposal-standalone').classList.add('active');
     document.getElementById('bottom-bar').style.display='none';
     document.getElementById('header').style.display='none';
-    try{
-      const b64=hash.replace('#proposal/','').replace('#/','').replace('#','');
-      const json=decodeURIComponent(atob(b64));
-      snap=JSON.parse(json);
-      propTier=snap.tier||'good';
-      renderStandaloneProposal();
-    }catch(e){
-      document.getElementById('proposal-standalone-app').innerHTML='<div style="text-align:center;padding:60px 20px;color:#6b7280"><div style="font-size:40px;margin-bottom:12px">🔗</div><h2 style="color:#374151">Invalid proposal link</h2><p style="margin-top:8px">Please contact Dynamic Custom Pools.</p><p style="margin-top:16px"><a href="tel:7133381046" style="color:#1e3a5f;font-weight:700">📞 713-338-1046</a></p></div>';
-    }
+    (async()=>{
+      try{
+        _ps_snap=await decodeProposal(hash);
+        propTier=_ps_snap.tier||'good';
+        renderStandaloneProposal();
+      }catch(e){
+        document.getElementById('proposal-standalone-app').innerHTML='<div style="text-align:center;padding:60px 20px;color:#6b7280"><div style="font-size:40px;margin-bottom:12px">🔗</div><h2 style="color:#374151">Invalid proposal link</h2><p style="margin-top:8px">Please contact Dynamic Custom Pools.</p><p style="margin-top:16px"><a href="tel:7133381046" style="color:#1e3a5f;font-weight:700">📞 713-338-1046</a></p></div>';
+      }
+    })();
   }
 }
 
