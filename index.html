@@ -1479,6 +1479,7 @@ function renderGBB(snap){
 
   const cols=document.getElementById('gbb-cols');
   if(!cols)return;
+  cols.style.gridTemplateColumns='1fr 1fr 1fr';
   const COLORS_MAP={good:'#2563eb',better:'#7c3aed',best:'#b45309'};
   const BGS_MAP={good:'#eff6ff',better:'#f5f3ff',best:'#fffbeb'};
   cols.innerHTML=['good','better','best'].map(t=>{
